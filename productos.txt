@@ -1,0 +1,4 @@
+Arroz;2500;Granos
+Leche;4500;Lácteos
+Azúcar;3000;Endulzantes
+Condensada;23450.0;Lacteos
