@@ -1,0 +1,4 @@
+Laptop HP Pavilion;1200000.0;Tecnología;/img/laptop.png
+Impresora 3D;500000.0;Tecnologia;/img/impresora.png
+Mouse Inalambrico;20000.0;Tecnología;/img/mouse.png
+Teclado Inalambrico;150000.0;Tecnología;/img/teclado.png
