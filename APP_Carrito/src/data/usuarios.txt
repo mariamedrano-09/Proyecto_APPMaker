@@ -1,3 +1,4 @@
 admin,1234,ADMIN
 usuario,1234,USER
 maria,12345,ADMIN
+yesica,1234,ADMIN

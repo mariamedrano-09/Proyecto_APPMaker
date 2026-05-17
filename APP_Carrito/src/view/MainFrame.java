@@ -21,7 +21,7 @@ public class MainFrame extends javax.swing.JFrame {
         setLayout(new BorderLayout());
 
         // Panel inicial (Login)
-        add(new LoginPanel(), BorderLayout.CENTER);
+        add(new Login_Panel(), BorderLayout.CENTER);
         
     }
 

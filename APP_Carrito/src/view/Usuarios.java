@@ -2,7 +2,8 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
-import controller.DataStore;
+import util.ArchivoUsuarios;
+
 
 public class Usuarios extends JPanel {
     private JList<String> listaUsuarios;
@@ -21,8 +22,9 @@ public class Usuarios extends JPanel {
         lblTitle.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
         add(lblTitle, BorderLayout.NORTH);
 
-        // Lista dinámica de usuarios desde DataStore
-        listaUsuarios = new JList<>(DataStore.getUsuarios().toArray(new String[0]));
+        // Lista dinámica de usuarios desde DataStore        
+
+        listaUsuarios = new JList<>(ArchivoUsuarios.leerUsuarios().toArray(new String[0]));
         listaUsuarios.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         listaUsuarios.setBackground(new Color(240, 248, 255));
         listaUsuarios.setSelectionBackground(new Color(70, 130, 180));
@@ -54,20 +56,25 @@ public class Usuarios extends JPanel {
         add(bottom, BorderLayout.SOUTH);
 
         // Acción de agregar usuario
-        btnAgregar.addActionListener(e -> {
-            String nuevoUsuario = JOptionPane.showInputDialog(this, "Ingrese nombre del nuevo usuario:");
-            if(nuevoUsuario != null && !nuevoUsuario.trim().isEmpty()) {
-                DataStore.agregarUsuario(nuevoUsuario);
-                actualizarLista();
-                JOptionPane.showMessageDialog(this, "Usuario agregado: " + nuevoUsuario);
-            }
-        });
+       btnAgregar.addActionListener(e -> {
 
+    String nuevoUsuario = JOptionPane.showInputDialog(this, "Usuario:");
+    String password = JOptionPane.showInputDialog(this, "Contraseña:");
+    String rol = JOptionPane.showInputDialog(this, "Rol (ADMIN / USER):");
+    if(nuevoUsuario != null && password != null && rol != null &&
+       !nuevoUsuario.trim().isEmpty()) {
+        ArchivoUsuarios.guardarUsuario(nuevoUsuario, password, rol);
+        actualizarLista();
+        JOptionPane.showMessageDialog(this,
+                "Usuario agregado: " + nuevoUsuario);
+    }
+});
         // Acción de eliminar usuario
         btnEliminar.addActionListener(e -> {
             String seleccionado = listaUsuarios.getSelectedValue();
             if(seleccionado != null) {
-                DataStore.eliminarUsuario(seleccionado);
+                String usuario = seleccionado.split(" - ")[0];
+                ArchivoUsuarios.eliminarUsuario(usuario);
                 actualizarLista();
                 JOptionPane.showMessageDialog(this, "Usuario eliminado: " + seleccionado);
             } else {
@@ -79,7 +86,7 @@ public class Usuarios extends JPanel {
         btnRegresar.addActionListener(e -> {
             JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
             frame.getContentPane().removeAll();
-            frame.add(new AdminPanel(), BorderLayout.CENTER);
+            frame.add(new Admin_Panel(), BorderLayout.CENTER);
             frame.revalidate();
             frame.repaint();
         });
@@ -87,6 +94,7 @@ public class Usuarios extends JPanel {
 
     // Método para refrescar la lista
     private void actualizarLista() {
-        listaUsuarios.setListData(DataStore.getUsuarios().toArray(new String[0]));
-    }
+
+    listaUsuarios.setListData(ArchivoUsuarios.leerUsuarios().toArray(new String[0]));
+}
 }
