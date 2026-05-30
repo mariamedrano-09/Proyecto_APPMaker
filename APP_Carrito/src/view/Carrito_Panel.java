@@ -4,111 +4,202 @@ import javax.swing.*;
 import java.awt.*;
 import controller.DataStore;
 import model.ItemCarrito;
+import model.Pedido;
+import java.util.ArrayList;
 
-public class Carrito_Panel extends JPanel {  
-    private JList<ItemCarrito> listaCarrito;
+public class Carrito_Panel extends JPanel {
 
+    private JPanel panelTarjetas;
+    private JLabel lblTotal;
 
     public Carrito_Panel() {
+
         setLayout(new BorderLayout());
         setBackground(new Color(25, 25, 112));
 
-        // Título
+        // TÍTULO
         JLabel lblTitle = new JLabel("Carrito de Compras", SwingConstants.CENTER);
-        ImageIcon iconcart = new ImageIcon(getClass().getResource("/img/carro.png"));
-        Image imgcart = iconcart.getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH);
+
+        ImageIcon iconcart =
+                new ImageIcon(getClass().getResource("/img/carro.png"));
+
+        Image imgcart =
+                iconcart.getImage().getScaledInstance(
+                        32, 32, Image.SCALE_SMOOTH);
+
         lblTitle.setIcon(new ImageIcon(imgcart));
-        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 26));
+
+        lblTitle.setFont(
+                new Font("Segoe UI", Font.BOLD, 26));
+
         lblTitle.setForeground(Color.WHITE);
-        lblTitle.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+
+        lblTitle.setBorder(
+                BorderFactory.createEmptyBorder(
+                        20, 0, 20, 0));
+
         add(lblTitle, BorderLayout.NORTH);
 
-        // Lista dinámica desde DataStore
-        listaCarrito = new JList<>(DataStore.getCarrito().toArray(new ItemCarrito[0]));
-        listaCarrito.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        listaCarrito.setBackground(new Color(240, 248, 255));
-        listaCarrito.setSelectionBackground(new Color(70, 130, 180));
-        listaCarrito.setSelectionForeground(Color.WHITE);
+        // PANEL DE TARJETAS
+        panelTarjetas = new JPanel();
 
-        JScrollPane scroll = new JScrollPane(listaCarrito);
-        scroll.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        panelTarjetas.setLayout(
+                new BoxLayout(
+                        panelTarjetas,
+                        BoxLayout.Y_AXIS));
+
+        panelTarjetas.setBackground(
+                new Color(240, 248, 255));
+
+        JScrollPane scroll =
+                new JScrollPane(panelTarjetas);
+
+        scroll.setBorder(
+                BorderFactory.createEmptyBorder(
+                        10, 20, 10, 20));
+
         add(scroll, BorderLayout.CENTER);
 
-        // Panel inferior con botones
+        // PANEL INFERIOR
         JPanel bottom = new JPanel();
+
         bottom.setOpaque(false);
 
-        JButton btnComprar = new JButton("Finalizar Compra");
-        btnComprar.setBackground(new Color(0, 180, 100));
-        btnComprar.setForeground(Color.WHITE);
-        btnComprar.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblTotal = new JLabel("TOTAL: $0");
 
-        JButton btnCancelar = new JButton("Eliminar Seleccionado");
-        btnCancelar.setBackground(new Color(255, 140, 0));
-        btnCancelar.setForeground(Color.WHITE);
-        btnCancelar.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblTotal.setForeground(Color.WHITE);
 
-        JButton btnRegresar = new JButton("Regresar");
-        btnRegresar.setBackground(new Color(200, 50, 50));
-        btnRegresar.setForeground(Color.WHITE);
-        btnRegresar.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        lblTotal.setFont(
+                new Font("Segoe UI",
+                        Font.BOLD,
+                        18));
 
+        JButton btnComprar =
+                new JButton("Finalizar Compra");
+
+        btnComprar.setBackground(
+                new Color(0, 180, 100));
+
+        btnComprar.setForeground(
+                Color.WHITE);
+
+        btnComprar.setFont(
+                new Font("Segoe UI",
+                        Font.BOLD,
+                        14));
+
+        JButton btnRegresar =
+                new JButton("Regresar");
+
+        btnRegresar.setBackground(
+                new Color(200, 50, 50));
+
+        btnRegresar.setForeground(
+                Color.WHITE);
+
+        btnRegresar.setFont(
+                new Font("Segoe UI",
+                        Font.BOLD,
+                        14));
+
+        bottom.add(lblTotal);
+        bottom.add(Box.createHorizontalStrut(20));
         bottom.add(btnComprar);
-        bottom.add(btnCancelar);
         bottom.add(btnRegresar);
+
         add(bottom, BorderLayout.SOUTH);
 
-        // Acción de finalizar compra
-      btnComprar.addActionListener(e -> {
-    double total = 0;
-    for (ItemCarrito item : DataStore.getCarrito()) {
-        total += item.getProducto().getPrecio() * item.getCantidad();
-    }
-    // Crear pedido
-    model.Pedido pedido = new model.Pedido(
-            new java.util.ArrayList<>(DataStore.getCarrito()),
-            total
-    );
-
-    // ENCOLAR pedido
-    DataStore.agregarPedido(pedido);
-    // Guardar en historial
-    DataStore.agregarAlHistorial(pedido.toString());
-
-    // Vaciar carrito
-    DataStore.vaciarCarrito();
-    actualizarLista();
-
-    JOptionPane.showMessageDialog(this,
-            "Pedido agregado a la cola de procesamiento.\nTotal: $" + String.format("%,.0f", total));
-});
-
-        
-
-        // Acción de eliminar producto
-        btnCancelar.addActionListener(e -> {
-            ItemCarrito seleccionado = listaCarrito.getSelectedValue();
-    if(seleccionado != null) {
-        DataStore.eliminarDelCarrito(seleccionado);
+        // CARGAR TARJETAS
         actualizarLista();
-        JOptionPane.showMessageDialog(this, "Producto eliminado del carrito.");
-    } else {
-        JOptionPane.showMessageDialog(this, "Selecciona un producto para eliminar.");
-    }
-});
 
-        // Acción de regresar al panel principal
+        // FINALIZAR COMPRA
+        btnComprar.addActionListener(e -> {
+
+            if (DataStore.getCarrito().isEmpty()) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "El carrito está vacío.");
+
+                return;
+            }
+
+            double total = 0;
+
+            for (ItemCarrito item :
+                    DataStore.getCarrito()) {
+
+                total += item.getCantidad()
+                        * item.getProducto().getPrecio();
+            }
+
+            Pedido pedido =
+                    new Pedido(
+                            new ArrayList<>(
+                                    DataStore.getCarrito()),
+                            total);
+
+            DataStore.agregarPedido(pedido);
+
+            DataStore.agregarAlHistorial(
+                    pedido.toString());
+
+            DataStore.vaciarCarrito();
+
+            actualizarLista();
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Pedido enviado correctamente.\n"
+                    + "Total: $"
+                    + String.format("%,.0f", total));
+        });
+
+        // REGRESAR
         btnRegresar.addActionListener(e -> {
-            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+
+            JFrame frame =
+                    (JFrame) SwingUtilities
+                            .getWindowAncestor(this);
+
             frame.getContentPane().removeAll();
-            frame.add(new Usuarios_Panel(), BorderLayout.CENTER);
+
+            frame.add(
+                    new Usuarios_Panel(),
+                    BorderLayout.CENTER);
+
             frame.revalidate();
             frame.repaint();
         });
     }
 
-    // Método para refrescar la lista
+    // ACTUALIZAR TARJETAS
     private void actualizarLista() {
-    listaCarrito.setListData(DataStore.getCarrito().toArray(new ItemCarrito[0]));
-}
+
+        panelTarjetas.removeAll();
+
+        double total = 0;
+
+        for (ItemCarrito item :
+                DataStore.getCarrito()) {
+
+            panelTarjetas.add(
+                    new TarjetaCarrito(
+                            item,
+                            this::actualizarLista));
+
+            panelTarjetas.add(
+                    Box.createVerticalStrut(10));
+
+            total += item.getCantidad()
+                    * item.getProducto().getPrecio();
+        }
+
+        lblTotal.setText(
+                "TOTAL: $"
+                + String.format("%,.0f", total));
+
+        panelTarjetas.revalidate();
+        panelTarjetas.repaint();
+    }
 }
