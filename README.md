@@ -1,7 +1,17 @@
-El contenido de esta aplicacion, se realiza para el Entregable 02 Universidad de Cordoba. Consiste en crear un prototipo segunda entrega incluyendo:
+El contenido de esta aplicacion, se realiza para el Entregable Final de Universidad de Cordoba PROGRAMACION II. Consiste en crear un prototipo segunda entrega incluyendo:
 
--Login
+- Login
 
--Opciones de usuario y administrador
+- Opciones de usuario y administrador
 
-- Catalogo de productos.
+- Carrito de compra
+
+- Historial de compra
+
+- Lista de deseos
+
+El proyecto puede ser desarrollado en JavaFX o JFrame, con las siguientes ponderaciones:
+
+- Proyecto realizado en JavaFX: Va sobre 5.0
+
+- Proyecto realizado en JFrame: Va sobre 4.0
